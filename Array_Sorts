@@ -1,0 +1,192 @@
+//Array Sorts for C++
+	void InsertionSort(int TheArray[],int size)///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	{
+		int holder;
+		int counter;
+
+		for(int x = 1; x < size; x++)
+		{
+			holder = TheArray[x];
+			counter = x;
+			while(((counter-1) >= 0) && (TheArray[counter] < TheArray[counter-1]))
+			{
+				TheArray[counter] = TheArray[counter-1];
+				TheArray[counter-1] = holder;
+				counter--;
+			}
+		}
+		return;
+	}
+	void MergeSort(int Source[],int High, int Low, int Med, int Dest[])/////////////////////////////////////////////////////////////////////////////////////
+	{
+		if((High != Low) && (High != Med))
+		{
+			MergeSort(Dest, Med,  Low, (Med+Low)/2, Source);//To the Left To the Left
+		
+			MergeSort(Dest, High,  Med+1, (High+Med+1)/2, Source);//To the Right To the Right
+			//merge
+
+			int indexA = Low;
+			int indexB = Med+1;
+			int indexC = Low;
+		
+			while((indexA <= Med) && (indexB <= High))
+			{
+				if (Source[indexA] < Source[indexB])
+				{
+					Dest[indexC] = Source[indexA];
+					indexA++;
+				}
+				else
+				{
+					Dest[indexC] = Source[indexB];
+					indexB++;
+				}
+				indexC++;
+			}
+			// Remaining Digits Moved
+			while (indexA <= Med)
+			{
+				Dest[indexC] = Source[indexA];
+				indexA++;
+				indexC++;
+			}
+			while (indexB <= High)
+			{
+				Dest[indexC] = Source[indexB];
+				indexB++;
+				indexC++;
+			}
+			return;
+		}
+	}
+	int partition1(int arr[], int top, int bottom)//For Quicksort
+	{
+		int meh = (top+bottom)/2;
+		int pivot = arr[meh];
+		arr[meh]=arr[bottom];
+
+		while (top != bottom)
+		{
+			while((top != bottom) && (arr[top] <= pivot))// left to right
+				top++;
+
+			if((top != bottom) && (arr[top] > pivot))
+			{
+				arr[bottom] = arr[top];
+				bottom--;
+				//top++;
+			}
+
+			while ((top != bottom) && (arr[bottom] >= pivot))// right to left
+				bottom--;
+
+			if((top != bottom) && (arr[bottom] < pivot))
+			{
+				arr[top] = arr[bottom];
+				top++;
+				//bottom--;
+			}
+		}
+		//arr[top] = pivot;
+		arr[bottom] = pivot;
+		//return top;
+		return bottom;
+	}
+	void QuickSort(int TheArray[], int top, int bottom)
+	{
+		 int middle;
+		 if (top < bottom)
+		 {
+			  middle = partition1(TheArray, top, bottom);
+			  if(top < middle-1)
+				QuickSort(TheArray, top, middle-1);   // sort first section
+			  if(bottom > middle+1)
+				 QuickSort(TheArray, middle+1, bottom);    // sort second section
+		 }
+		 return;
+	}
+	void ShellSort(int TheArray[], int N)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	{	
+		int i;
+		int temp;
+		int flag = 1;
+		int numLength = N;
+		int d = numLength;
+		bool done = false;
+		while((flag || (d > 1)) && (!done))
+		{
+			flag = 0;
+			d = (d+1)/2;
+			if(d == 1)
+				done = true;
+			for (i = 0; i < (numLength - d); i++)
+			{
+				if (TheArray[i + d] >= TheArray[i])
+				{
+					temp = TheArray[i + d];
+					TheArray[i + d] = TheArray[i];
+					TheArray[i] = temp;
+					flag = 1;
+				}
+			}
+		}
+		return;
+	}
+	int FindBestChild(int arr[], int parent, int size)//For Heap Sort
+	{
+		int Left = parent*2+1;
+		int Right = parent*2+2;
+
+		if(Left > size)
+			return -1;
+		if(Right > size)//one child
+			return Left;
+		else if(arr[Left] > arr[Right])
+			return Left;
+		else
+			return Right;
+	}
+	void HeapSort(int TheArray[], int N)
+	{
+		int parent;
+		int child;
+		int temp;
+
+		for(int x = N-1;x>0;x--)
+		{
+			child = x;
+			parent = (child-1)/2;
+
+			while((child>0)&&(TheArray[child]>TheArray[parent]))
+			{
+				temp = TheArray[parent];
+				TheArray[parent] = TheArray[child];
+				TheArray[child] = temp;
+
+				child=parent;
+				parent=(child-1)/2;
+			}
+		}
+
+		for(int x = N-1;x>0;x--)
+		{
+			temp = TheArray[x];
+			TheArray[x] = TheArray[0];
+			TheArray[0] = temp;
+
+			parent = 0;
+			child = FindBestChild(TheArray, parent,x-1);
+
+			while((child>0)&&(TheArray[child] > TheArray[parent]))
+			{
+				temp = TheArray[parent];
+				TheArray[parent] = TheArray[child];
+				TheArray[child] = temp;
+
+				parent = child;
+				child = FindBestChild(TheArray, parent,x-1);
+			}
+		}
+		return;
+}
