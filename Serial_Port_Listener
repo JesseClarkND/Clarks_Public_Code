@@ -1,3 +1,4 @@
+//Used in VC++
 void Nemo()
 {
 	while (1)
