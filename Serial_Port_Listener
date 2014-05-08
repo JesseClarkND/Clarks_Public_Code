@@ -1,4 +1,5 @@
 //Used in VC++
+//Based on some old code I found years ago
 void Nemo()
 {
 	while (1)
