@@ -1,0 +1,417 @@
+//This is a header file for VC++
+//There is an example commented out below on how to use this class
+//It is a Bin Tree
+//Yo
+
+#include "stdafx.h"
+#include <iostream>
+#include <fstream>//////
+#include <string>
+#include <string.h>
+#include <iomanip>
+
+
+using namespace std;
+
+//	tom -50
+
+class Bnode
+{
+public:
+	int item;
+	Bnode * left;
+	Bnode * right;
+};
+
+typedef Bnode * bnodeptr;
+class Btree
+{
+public:
+	Btree()
+	{
+		root=NULL;
+		nodecount = 0;
+		pseudoglobal = 0;
+	}	
+	~Btree()
+	{
+		Clear();
+		root = NULL;
+		
+	}
+	void inorder()
+	{
+		recinorder(root);
+	}
+	void AddNode2(int newvalue)
+	{
+		addnodeprivate(newvalue,&root);
+		nodecount++;
+	}
+	void Balance()
+	{
+		if(nodecount == 0)
+			cout << "No Items In Tree" << endl;
+		else
+		{
+			int* meh = NULL;
+			meh = new int[nodecount];
+
+			int qerk = nodecount;
+
+			arrayafy(root,meh);//puts tree in array
+			pseudoglobal=0;
+			cleartree(root);//delete tree
+			root=NULL;
+			rebuildtree(meh,nodecount-1,0);//rebuild tree from array
+
+			nodecount = qerk;
+		}
+
+	}
+
+	void Clear()
+	{
+		if(nodecount == 0)
+			cout << "No Items In Tree" << endl;
+		else
+		{
+			cleartree(root);//delete tree
+			root=NULL;
+		}
+	}
+
+	void Save()
+	{
+		if(nodecount == 0)
+			cout << "No Items In Tree" << endl;
+		else
+		{
+			Balance();
+
+			int* sasd = NULL;
+			sasd = new int[nodecount];
+
+			int* temp3 = NULL;
+			temp3 = new int[nodecount];
+
+			pseudoglobal=0;
+			arrayafy(root, sasd);
+			pseudoglobal=0;
+			arrayafy2save(sasd, nodecount-1, 0, temp3);//puts tree in array
+			saveafile(temp3);//puts data in file
+			cout << "File Saved" << endl;		
+		}
+
+	}
+
+	void Load()
+	{
+		Clear();
+		nodecount = loadafile();	
+	}	
+	bool Search(int item)
+	{
+		if(nodecount == 0)
+		{
+			cout << "No Items In Tree" << endl;
+			return false;
+		}
+		else
+		{
+			bool *ptr;
+			ptr = new bool;
+			*ptr = false;
+			searchabit(item, root, ptr);
+			return *ptr;		
+		}
+
+	}
+
+	void Delete(int item)
+	{
+		if(nodecount == 0)
+			cout << "No Items In Tree" << endl;
+		else
+		{
+			if(Search(item))
+			{
+				deletenumber(item,&root);
+				cout << "The Number " << item << " has been deleted." << endl;
+				nodecount--;
+			}
+			else
+				cout << "The Number " << item << " isn't in the tree." << endl;		
+		}
+	}
+
+private:
+	Bnode * root;
+	int nodecount;
+	int pseudoglobal;
+
+	void recinorder(bnodeptr trav)
+	{
+		if (trav!=NULL)
+		{
+			recinorder(trav->left);
+			cout << trav->item << endl;
+			recinorder(trav->right);
+		}
+	}
+
+	void addnodeprivate(int newvalue, bnodeptr *trav)
+	{
+		Bnode * temp = new Bnode;
+		temp->item=newvalue;
+		temp->left = temp->right=NULL;
+
+		while ((*trav)!=NULL)
+		{
+			if ((*trav)->item >= newvalue) // go left
+				trav=&((*trav)->left);
+			else  // go right
+				trav=&((*trav)->right);
+		}
+		*trav=temp;
+	}
+
+	void arrayafy2save(int source[], int high, int low, int dest[])
+	{
+		if((high < 0) || (low >= nodecount))
+			return;
+		if(low > high)
+			return;
+
+		int med = (high+low)/2;
+
+		dest[pseudoglobal++] = source[med];
+		
+		arrayafy2save(source,med-1,low,dest);//left -1((med+low)/2)
+		
+		arrayafy2save(source,high,med+1,dest);//right +1((high+med)/2)
+	}	
+	void arrayafy(bnodeptr trav, int arr[])
+	{
+		if (trav!=NULL)
+		{
+			arrayafy(trav->left, arr);//in order
+			arr[pseudoglobal++] = trav->item;
+			arrayafy(trav->right, arr);
+		}
+	}
+
+	void cleartree(bnodeptr trav)
+	{
+		if (trav!=NULL)
+		{
+			cleartree(trav->left);//post order
+			cleartree(trav->right);
+			delete trav;	
+		}
+	}
+
+	void rebuildtree(int derp[], int high, int low)//int med
+	{
+		if((high < 0) || (low >= nodecount))
+			return;
+
+		if(low > high)
+			return;
+
+		int med = (high+low)/2;
+
+		AddNode2(derp[med]);
+		
+		rebuildtree(derp,med-1,low);//left -1((med+low)/2)
+		
+		rebuildtree(derp,high,med+1);//right +1((high+med)/2)	
+	}	
+	void searchabit(int number, bnodeptr trav, bool *f)
+	{
+		if (trav!=NULL)
+		{
+			searchabit(number, trav->left, f);
+			if(trav->item == number)
+				*f = true;
+			searchabit(number, trav->right, f);
+		}
+	}
+
+	void saveafile(int arr[])
+	{
+		char name[15];
+		cout << "Name the file. (include '.txt'): ";
+		cin >> name;
+
+		ofstream myfile;
+		myfile.open(name);
+
+		for(int x=0; x<nodecount; x++)
+			myfile << arr[x] << "\n";
+
+		myfile << '*' << "\n";
+		myfile.close();
+	}
+
+	int loadafile()
+	{
+		char name[15];
+		cout << "Name the file. (include '.txt'): ";
+		cin >> name;
+
+		char Kjunk[40];
+		fstream infile;
+		infile.open(name, ios::in);
+		int r = 0;
+		if(!infile) cout << "No File Found" << endl;
+		else
+		{
+			while(true)
+			{
+				infile.getline(Kjunk,40);
+				if(Kjunk[0] == '*')
+					break;
+				AddNode2(atoi(Kjunk));
+				r++;
+			}
+		}
+		infile.close();
+		return r;
+	}
+	int pullup(bnodeptr * trav2)
+	{
+		if((*trav2)->left == NULL)
+		{
+			int tempint = (*trav2)->item;
+			bnodeptr tempptr = *trav2;
+			*trav2 = tempptr->right;
+			delete tempptr;
+			return tempint;
+		}
+		else
+		{
+			while((*trav2)->left != NULL)
+				trav2 = &((*trav2)->left);
+		
+			int tempint = (*trav2)->item;
+			bnodeptr tempptr = *trav2;
+			*trav2 = tempptr->right;
+			delete tempptr;
+			return tempint;
+
+		}
+	}
+
+	void deletenumber(int delnum, bnodeptr *trav)
+	{
+		//balance first?
+		while(*trav != NULL)
+		{
+			if((*trav)->item == delnum)
+			{
+				if(((*trav)->left == NULL) && ((*trav)->right == NULL))
+				{
+					delete(*trav);
+					*trav = NULL;
+				}
+				else if(((*trav)->left == NULL) && ((*trav)->right != NULL))
+				{
+					bnodeptr temp = *trav;
+					*trav = temp->right;
+					delete temp;
+				}
+				else if(((*trav)->left != NULL) && ((*trav)->right == NULL))
+				{
+					bnodeptr temp = *trav;
+					*trav = temp->left;
+					delete temp;
+				}
+				else if(((*trav)->left != NULL) && ((*trav)->right != NULL))////////////////////////////
+				{
+					(*trav)->item = pullup(&(*trav)->right);	
+				}
+			}
+			else
+			{
+				if((*trav)->item > delnum)//left
+					trav=&((*trav)->left);
+				else//((*trav)->item < delnum)//right
+					trav=&((*trav)->right);
+			}
+		}
+	}
+};
+
+
+//void main()
+//{
+//	Btree tree;
+//	int done = true;
+//
+//	while(done)
+//	{
+//		int choice;
+//		cout << endl;
+//		cout << "1) Add Number" <<endl;
+//		cout << "2) Balance Tree" <<endl;
+//		cout << "3) Search Number" <<endl;
+//		cout << "4) Delete Number" <<endl;
+//		cout << "5) Save Tree" <<endl;
+//		cout << "6) Load Tree" <<endl;
+//		cout << "7) Quit" <<endl;
+//		cout << "->";
+//		cin >> choice;
+//		cout << endl;
+//
+//		if(choice == 1)
+//		{
+//			int num2add;
+//			cout << "Input number to add. ->";
+//			cin >> num2add;
+//			tree.AddNode2(num2add);
+//			cout<<endl;
+//		}
+//		else if(choice == 2)
+//		{
+//			tree.Balance();
+//			cout << "Tree has been Balanced" << endl;
+//		}
+//		else if(choice == 3)
+//		{
+//			int searchnum;
+//			cout << "Input number to search for. ->";
+//			cin >> searchnum;
+//			cout << endl;
+//			if(tree.Search(searchnum))
+//				cout << searchnum << " has been found." << endl;
+//			else
+//				cout << searchnum << " has not been found." << endl;
+//		}
+//		else if(choice == 4)
+//		{
+//			int delnumber;
+//			cout << "Input number to delete. ->";
+//			cin >> delnumber;
+//			cout << endl;
+//			tree.Delete(delnumber);
+//		}
+//		else if(choice == 5)
+//		{
+//			tree.Save();
+//		}
+//		else if(choice == 6)
+//		{
+//			tree.Load();
+//		}
+//		else if(choice == 7)
+//		{
+//			done = false;
+//		}
+//		else
+//		{
+//			cout << "Input is confusing." << endl;
+//		}
+//	}	
+//	system("pause");
+//}
