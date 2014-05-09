@@ -1,0 +1,23 @@
+REM This is just a quick comparison for batch files so you can check for growth in a dir
+REM Set the dir variable below and it will let know if the total file size it growing
+REM It was check size, wait 10 seconds then check the size again and compare them
+
+setlocal enabledelayedexpansion
+set dir=%C:\Users\%userprofile%\Desktop\folder
+set sizeone=0
+set sizetwo=0
+
+for /R %dir% %%F in (*) do ( set /a sizeone=!sizeone!+%%~zF)
+echo %sizeone%
+
+timeout 10
+
+for /R %dir% %%F in (*) do ( set /a sizetwo=!sizetwo!+%%~zF)
+echo %sizetwo%
+
+if  %sizetwo% leq %sizeone% (
+REM If the file is not growing
+echo The file is shrinking or staying the same
+) else (
+echo The file is growing
+)
