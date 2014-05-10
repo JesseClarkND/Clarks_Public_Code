@@ -1,0 +1,54 @@
+	function checkemup($mode, $input, $stlg)//1 is num, 2 is alph, 3 is alphanum, 4 is price, 5 is email
+	{
+		if($input=="" || $input==NULL)
+			return true;
+			
+		if($mode == 1) //Numeric only
+		{
+			if(!is_numeric($input))//if it is not numbers
+				return false;
+			if($stlg != 0)//if we want to check string length
+				if(strlen($input)>$stlg)
+					return false;
+			return true;
+		}
+		elseif($mode == 2) //Alpha only
+		{
+			if(!ctype_alpha($input))//if it is not letters
+				return false;
+			if($stlg != 0)//if we want to check string length
+				if(strlen($input)>$stlg)
+					return false;
+			return true;	
+		}
+		elseif($mode == 3) //Alphanermic
+		{
+			if(!ctype_alnum($input))//if it is not letters
+				return false;
+			if($stlg != 0)//if we want to check string length
+				if(strlen($input)>$stlg)
+					return false;
+			return true;	
+		}
+		elseif($mode == 4) //Price
+		{
+			$pattern = '/^\d+(?:\.\d{2})?$/';
+
+			if (preg_match($pattern, $input) == '0')
+			   return false;
+			if($stlg != 0)//if we want to check string length
+				if(strlen($input)>$stlg)
+					return false;
+			return true;
+		}
+		elseif($mode == 5) //Email
+		{
+			if (!filter_var($input, FILTER_VALIDATE_EMAIL))
+				return false;
+			if($stlg != 0)//if we want to check string length
+				if(strlen($input)>$stlg)
+					return false;
+			return true;
+		}
+		return false;
+	}
