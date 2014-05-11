@@ -1,0 +1,174 @@
+//Doubly Link List for VC++
+//Nothing special just the run of the mill assignment
+
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+struct node
+{
+	int data;
+	node *prev;
+	node *next;
+};
+
+class CDList
+{
+private:
+	node *front;
+	node *back;
+	node *current;
+	node *startpoint;
+	int stackcount;
+public:
+
+	CDList()//default constructor used to initialize data.
+	{
+		node *front = NULL;
+		node *back = NULL;
+		node *current = NULL;
+		stackcount = 0;
+	}
+
+	void AddToFront(int item)    //Used to add one item to the front of the list.
+	{
+	   node *temp = new node;
+	   if(stackcount == 0)
+	   {
+			front = temp;
+			back = temp;
+			current = temp;
+			temp->data = item;
+			temp->next = temp;
+			temp->prev = temp;
+			stackcount++;
+	   }
+	   else
+	   {
+		   back->prev = front;
+		   front->next = temp;
+		   temp->data = item;
+		   temp->next = back;
+		   temp->prev = front;
+		   front = temp;
+		   current = front;
+		   stackcount++;
+	   }
+
+	}
+
+	void AddToBack(int item)    //Used to add one item to the back of the list
+	{
+	   node *temp = new node;
+	   if(stackcount == 0)
+	   {
+			front = temp;
+			back = temp;
+			current = temp;
+			temp->data = item;
+			temp->next = temp;
+			temp->prev = temp;
+			stackcount++;
+	   }
+	   else
+	   {
+		   front->next = temp;
+		   back->prev = temp;
+		   temp->data = item;
+		   temp->next = back;
+		   temp->prev = front;
+		   back = temp;
+		   current = back;
+		   stackcount++;
+	   }
+	}
+
+	bool DeleteItem(int item)       //Search for the item.  If found delete item.  Return true if item is deleted and false if not found.
+	{
+		node *temp = current;
+		temp = current->next;
+		temp->prev = current->prev;
+		temp = current->prev;
+		temp->next = current->next;
+		temp = current;
+		current = current->prev;
+		delete temp;
+		stackcount--;
+	}
+
+	bool FindItem(int item)  //Search for the item.   Return true if item is found and false if not found.  Current should point to the found node.
+	{
+		node *find = current;
+		int x = 0;
+		while(x <= stackcount)
+		{
+			if (current->data == item) 
+				return true;
+			else
+				current = current->next;
+			x++;
+		}
+		return false;
+	}
+
+	void AddToCurrent(int item)   //Used to add one item to the current position.  The  new item should  follow current.
+	{
+		node *temp = new node;
+		temp->data = item;
+		temp->next = current->next;
+		temp->prev = current->prev;
+		current = temp;
+	}
+
+	void List()  //This procedure should output the list to the screen.
+	{
+		node *p = current;
+		cout << p->data << endl;
+		p = p->next;
+		while(p != current)
+		{
+			cout << p->data << endl;
+			p = p->next;
+		}
+	}
+	
+	~CDList()// destructor used to clean up dynamic memory
+	{
+		node *destroy;
+		destroy = current->next;
+		int x = 0;
+		while(x <= stackcount)
+		{
+			delete current;
+			x++;
+			if(x <= stackcount) break;
+			current = destroy->next;
+			delete destroy;
+			x++;
+			if(x <= stackcount) break;
+			destroy = current->next;
+			
+		}
+	}
+};
+
+void main()
+{       
+
+        CDList S1;
+        S1.AddToFront(10);
+        S1.AddToBack(20);
+        S1.AddToFront(30);
+        S1.AddToBack(40);
+		S1.List();
+		/*
+		I assume you're putting in your own code, cause there wasnt any on the page.
+		Peace Out
+       */
+	system("pause");
+ }
