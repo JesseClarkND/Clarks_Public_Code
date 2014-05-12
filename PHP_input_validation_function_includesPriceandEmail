@@ -50,5 +50,17 @@
 					return false;
 			return true;
 		}
+		elseif($mode == 6) //Phone
+		{
+		
+			$pattern = '\(?[2-9][0-8][0-9]\)?[-. ]?[0-9]{3}[-. ]?[0-9]{4}';
+			
+			if (preg_match($pattern, $input) == '0')
+			   return false;
+			if($stlg != 0)//if we want to check string length
+				if(strlen($input)>$stlg)
+					return false;
+			return true;
+		}		
 		return false;
 	}
