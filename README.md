@@ -1,4 +1,4 @@
 Clarks_Public_Code
 ==================
 
-Please help yourself to some codes.
+Enjoy yourslef with some old code.
